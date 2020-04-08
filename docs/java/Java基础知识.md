@@ -16,11 +16,11 @@
 - [10. 重载和重写的区别](#10-重载和重写的区别)
         - [重载](#重载)
         - [重写](#重写)
-- [11. Java 面向对象编程三大特性: 封装 继承 多态](#11-java-面向对象编程三大特性-封装-继承-多态)
+- [11. **Java 面向对象编程三大特性: 封装 继承 多态-重点**](#11-java-面向对象编程三大特性-封装-继承-多态)
     - [封装](#封装)
     - [继承](#继承)
     - [多态](#多态)
-- [12. String StringBuffer 和 StringBuilder 的区别是什么? String 为什么是不可变的?](#12-string-stringbuffer-和-stringbuilder-的区别是什么-string-为什么是不可变的)
+- [12. String StringBuffer 和 StringBuilder 的区别是什么? String 为什么是不可变的?-重点](#12-string-stringbuffer-和-stringbuilder-的区别是什么-string-为什么是不可变的)
 - [13. 自动装箱与拆箱](#13-自动装箱与拆箱)
 - [14. 在一个静态方法内调用一个非静态成员为什么是非法的?](#14-在一个静态方法内调用一个非静态成员为什么是非法的)
 - [15. 在 Java 中定义一个不做事且没有参数的构造方法的作用](#15-在-java-中定义一个不做事且没有参数的构造方法的作用)
@@ -56,6 +56,7 @@
 - [36. 常见关键字总结:static,final,this,super](#36-常见关键字总结staticfinalthissuper)
 - [37. Collections 工具类和 Arrays 工具类常见方法总结](#37-collections-工具类和-arrays-工具类常见方法总结)
 - [38.深拷贝 vs 浅拷贝](#38-深拷贝-vs-浅拷贝)
+- [39.布尔变量占用空间](#39.一个布尔变量占用多大空间？)
 - [参考](#参考)
 - [公众号](#公众号)
 
@@ -553,6 +554,31 @@ Java Io 流共涉及 40 多个类，这些类看上去很杂乱，但实际上�
 2. **深拷贝**：对基本数据类型进行值传递，对引用数据类型，创建一个新的对象，并复制其内容，此为深拷贝。
 
 ![deep and shallow copy](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-7/java-deep-and-shallow-copy.jpg)
+
+## 39.一个布尔变量占用多大空间？
+
+1. Oracle Java 教程里的说法是，其大小没有精确定义：
+
+> **boolean**: The `boolean` data type has only two possible values: `true` and `false`. Use this data type for simple flags that track true/false conditions. This data type represents one bit of information, but its "size" isn't something that's precisely defined.
+>
+> ref: https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
+
+2. Oracle Java 虚拟机规范里规定，单个布尔变量当做int处理，就是四字节；布尔数组当做字节数组处理，这里一个布尔值就占用一字节。
+
+> 3.3.4 The `boolean` Type
+>
+> Although the Java virtual machine defines a `boolean` type, it only provides very limited support for it. There are no Java virtual machine instructions solely dedicated to operations on `boolean` values. Instead, expressions in the Java programming language that operate on `boolean` values are compiled to use values of the Java virtual machine `int` data type.
+>
+> The Java virtual machine does directly support `boolean` arrays. Its *newarray* instruction enables creation of `boolean` arrays. Arrays of type `boolean` are accessed and modified using the `byte` array instructions *baload* and *bastore*.[2](https://docs.oracle.com/javase/specs/jvms/se6/html/Overview.doc.html#24357)
+>
+> The Java virtual machine encodes `boolean` array components using *1* to represent `true` and *0* to represent `false`. Where Java programming language `boolean` values are mapped by compilers to values of Java virtual machine type `int`, the compilers must use the same encoding.
+>
+> ref : https://docs.oracle.com/javase/specs/jvms/se6/html/Overview.doc.html#22909
+
+3. 实际布尔值占用空间取决于使用的虚拟机。因为有些虚拟机可能没有遵守规范。
+4. 可以实际操作一下：https://stackoverflow.com/questions/383551/what-is-the-size-of-a-boolean-variable-in-java
+
+
 
 ## 参考
 
