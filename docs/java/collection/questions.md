@@ -2,34 +2,33 @@
 
 <!-- TOC -->
 
-- [剖析面试最常见问题之Java集合框架](#剖析面试最常见问题之java集合框架)
-    - [说说List,Set,Map三者的区别？](#说说listsetmap三者的区别)
-    - [Arraylist 与 LinkedList 区别?](#arraylist-与-linkedlist-区别)
-        - [补充内容:RandomAccess接口](#补充内容randomaccess接口)
-        - [补充内容:双向链表和双向循环链表](#补充内容双向链表和双向循环链表)
-    - [ArrayList 与 Vector 区别呢?为什么要用Arraylist取代Vector呢？](#arraylist-与-vector-区别呢为什么要用arraylist取代vector呢)
-    - [说一说 ArrayList 的扩容机制吧](#说一说-arraylist-的扩容机制吧)
-    - [HashMap 和 Hashtable 的区别](#hashmap-和-hashtable-的区别)
-    - [HashMap 和 HashSet区别](#hashmap-和-hashset区别)
-    - [HashSet如何检查重复](#hashset如何检查重复)
-    - [HashMap的底层实现](#hashmap的底层实现)
-        - [JDK1.8之前](#jdk18之前)
-        - [JDK1.8之后](#jdk18之后)
-    - [HashMap 的长度为什么是2的幂次方](#hashmap-的长度为什么是2的幂次方)
-    - [HashMap 多线程操作导致死循环问题](#hashmap-多线程操作导致死循环问题)
-    - [ConcurrentHashMap 和 Hashtable 的区别](#concurrenthashmap-和-hashtable-的区别)
-    - [ConcurrentHashMap线程安全的具体实现方式/底层具体实现](#concurrenthashmap线程安全的具体实现方式底层具体实现)
-        - [JDK1.7（上面有示意图）](#jdk17上面有示意图)
-        - [JDK1.8 （上面有示意图）](#jdk18-上面有示意图)
-    - [comparable 和 Comparator的区别](#comparable-和-comparator的区别)
-        - [Comparator定制排序](#comparator定制排序)
-        - [重写compareTo方法实现按年龄来排序](#重写compareto方法实现按年龄来排序)
-    - [集合框架底层数据结构总结](#集合框架底层数据结构总结)
-        - [Collection](#collection)
-            - [1. List](#1-list)
-            - [2. Set](#2-set)
-        - [Map](#map)
-    - [如何选用集合?](#如何选用集合)
+- [说说List,Set,Map三者的区别？](#说说listsetmap三者的区别)
+- [**Arraylist 与 LinkedList 区别?-重点**](#arraylist-与-linkedlist-区别)
+    - [补充内容:RandomAccess接口](#补充内容randomaccess接口)
+    - [补充内容:双向链表和双向循环链表](#补充内容双向链表和双向循环链表)
+- [ArrayList 与 Vector 区别呢?为什么要用Arraylist取代Vector呢？](#arraylist-与-vector-区别呢为什么要用arraylist取代vector呢)
+- [说一说 ArrayList 的扩容机制吧](#说一说-arraylist-的扩容机制吧)
+- [HashMap 和 Hashtable 的区别](#hashmap-和-hashtable-的区别)
+- [HashMap 和 HashSet区别](#hashmap-和-hashset区别)
+- [HashSet如何检查重复](#hashset如何检查重复)
+- [**HashMap的底层实现-重点**](#hashmap的底层实现)
+    - [JDK1.8之前](#jdk18之前)
+    - [JDK1.8之后](#jdk18之后)
+- [HashMap 的长度为什么是2的幂次方](#hashmap-的长度为什么是2的幂次方)
+- [HashMap 多线程操作导致死循环问题](#hashmap-多线程操作导致死循环问题)
+- [ConcurrentHashMap 和 Hashtable 的区别](#concurrenthashmap-和-hashtable-的区别)
+- [ConcurrentHashMap线程安全的具体实现方式/底层具体实现](#concurrenthashmap线程安全的具体实现方式底层具体实现)
+    - [JDK1.7（上面有示意图）](#jdk17上面有示意图)
+    - [JDK1.8 （上面有示意图）](#jdk18-上面有示意图)
+- [**comparable 和 Comparator的区别**](#comparable-和-comparator的区别)
+    - [Comparator定制排序](#comparator定制排序)
+    - [重写compareTo方法实现按年龄来排序](#重写compareto方法实现按年龄来排序)
+- [集合框架底层数据结构总结](#集合框架底层数据结构总结)
+    - [Collection](#collection)
+        - [1. List](#1-list)
+        - [2. Set](#2-set)
+    - [Map](#map)
+- [如何选用集合?](#如何选用集合)
 
 <!-- /TOC -->
 
@@ -236,6 +235,10 @@ static int hash(int h) {
 
 我们首先可能会想到采用%取余的操作来实现。但是，重点来了：**“取余(%)操作中如果除数是2的幂次则等价于与其除数减一的与(&)操作（也就是说 hash%length==hash&(length-1)的前提是 length 是2的 n 次方；）。”** 并且 **采用二进制位操作 &，相对于%能够提高运算效率，这就解释了 HashMap 的长度为什么是2的幂次方。**
 
+> ref: [JDK1.8源码(七)——java.util.HashMap 类](https://www.cnblogs.com/ysocean/p/8711071.html)
+>
+> ref: [由HashMap哈希算法引出的求余%和与运算&转换问题](https://www.cnblogs.com/ysocean/p/9054804.html)
+
 ## HashMap 多线程操作导致死循环问题
 
 主要原因在于并发下的Rehash 会造成元素之间会形成一个循环链表。不过，jdk 1.8 后解决了这个问题，但是还是不建议在多线程下使用 HashMap,因为多线程下使用 HashMap 还是会存在其他问题比如数据丢失。并发环境下推荐使用 ConcurrentHashMap 。
@@ -288,12 +291,39 @@ ConcurrentHashMap取消了Segment分段锁，采用CAS和synchronized来保证�
 
 synchronized只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升N倍。
 
-## comparable 和 Comparator的区别
+## Comparable 和 Comparator的区别
 
-- comparable接口实际上是出自java.lang包 它有一个 `compareTo(Object obj)`方法用来排序
-- comparator接口实际上是出自 java.util 包它有一个`compare(Object obj1, Object obj2)`方法用来排序
+- Comparable接口实际上是出自java.lang包 它有一个 `compareTo(Object obj)`方法用来排序
+- Comparator接口实际上是出自 java.util 包它有一个`compare(Object obj1, Object obj2)`方法用来排序
 
 一般我们需要对一个集合使用自定义排序时，我们就要重写`compareTo()`方法或`compare()`方法，当我们需要对某一个集合实现两种排序方式，比如一个song对象中的歌名和歌手名分别采用一种排序方法的话，我们可以重写`compareTo()`方法和使用自制的Comparator方法或者以两个Comparator来实现歌名排序和歌星名排序，第二种代表我们只能使用两个参数版的 `Collections.sort()`.
+
+实现Comparable接口的元素的集合可以直接使用`Collections#sort(List, null)`和`Arrays#sort(Object[], null)`进行排序。如果传入了Comparator，则使用`Comparator#compare(Object obj1, Object obj2)`来进行排序，否则使用`Comparable#compareTo(Object obj)`进行排序（元素必须实现了Comparable接口，否则抛异常）。
+
+```java
+// Collections#sort(List)
+public static <T extends Comparable<? super T>> void sort(List<T> list) {
+    // Android-changed: Call sort(list, null) here to be consistent
+    // with that method's (Android changed) behavior.
+    // list.sort(null);
+    sort(list, null);
+}
+
+public static <T> void sort(List<T> list, Comparator<? super T> c) {
+  	Arrays.sort(a, (Comparator) c);
+}
+
+// Arrays#sort(Object[], Comparator)
+public static <T> void sort(T[] a, Comparator<? super T> c) {
+		if (c == null) {
+				sort(a);
+		} else {
+				TimSort.sort(a, 0, a.length, c, null, 0, 0);
+		}
+}
+
+
+```
 
 ### Comparator定制排序
 
